@@ -1,0 +1,10 @@
+#!/bin/bash
+
+case $1 in
+   start|reset)
+      curl -X POST http://localhost:8080/countdown/clock/$1
+      ;;
+
+   *)
+      echo "Usage: $0 {start | reset}"
+esac

@@ -1,0 +1,27 @@
+#!/bin/bash
+
+case $1 in
+   start)
+      cd "$(dirname $0)"
+      lcp=.
+      for f in ./lib/* ; do lcp=$lcp:$f ; done
+      [ "$OSTYPE" == "cygwin" ] && lcp=$(cygpath -wp "$lcp")
+      rm -rf *.log
+      "$JAVA_HOME/bin/java" -Dapp=@APP_NAME@-@APP_VERSION@ -cp "$lcp" $JAVA_OPTS -Xms256m -Xmx1024m @APP_PACKAGE@.Main >./@APP_NAME@-start.log 2>&1 &
+      ;;
+
+   stop)
+      pid=$(jps -v | grep @APP_NAME@-@APP_VERSION@ | cut -f 1 -d ' ')
+      [ "$pid" == "" ] && exit 0
+      [ "$OSTYPE" == "cygwin" ] && /bin/kill -f $pid || kill -9 $pid
+      echo "$pid stopped"
+      ;;
+
+   status)
+      proc=$(jps -v | grep @APP_NAME@-@APP_VERSION@)
+      [ "$proc" == "" ] && echo "stopped" || echo "running"
+      ;;
+
+   *)
+      echo "Usage: $0 {start | stop | status}"
+esac

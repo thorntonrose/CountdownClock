@@ -1,0 +1,47 @@
+<html>
+   <head>
+      <meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
+      <title>@APP_DISPLAY_NAME@</title>
+   </head>
+   <body>
+      <p>
+         <input id='time' type='text' value='24:00:00'></input>
+         <input id='setButton' type='button' value='Set'></input>
+         <input id='startButton' type='button' value='Start'></input>
+         <input id='stopButton' type='button' value='Stop'></input>
+      </p>
+
+      <p id="msg"></p>
+
+      <script type="text/javascript" src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+
+      <script type="text/javascript">
+         var contextRoot = window.location.pathname.split("/")[1];
+         var baseUrl = window.location.protocol + "//" + window.location.host + "/" + contextRoot;
+
+         $.ajaxSetup({ cache: false });
+         $("#setButton").click(function() { controlClock("put", "/" + $("#time").val()); });
+         $("#startButton").click(function() { controlClock("post", "/start"); });
+         $("#stopButton").click(function() { controlClock("post", "/stop"); });
+
+         function controlClock(oper, uri) {
+            disableButtons();
+
+            $.ajax({ url: baseUrl + "/clock" + uri, type: oper }).done(function(result, statusText, xhr) {
+               $("#msg").text(oper + " " + uri + ": " + (xhr.status == 204 ? "OK" : statusText));
+               enableButtons();
+            });
+         }
+
+         function enableButtons() {
+            $("#startButton").removeAttr("disabled");
+            $("#resetButton").removeAttr("disabled");
+         }
+
+         function disableButtons() {
+            $("#startButton").attr("disabled", "disabled");
+            $("#resetButton").attr("disabled", "disabled");
+         }
+      </script>
+   </body>
+</html>
