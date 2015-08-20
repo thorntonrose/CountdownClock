@@ -4,7 +4,7 @@ import java.util.concurrent.*
 import java.text.*
 
 class Clock {
-   static def duration
+   static def duration = 0
    static def thread
 
    private Clock() {
